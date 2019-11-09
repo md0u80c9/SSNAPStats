@@ -1,0 +1,210 @@
+url: http://strokeaudit.org
+
+authors:
+  Andrew Hill:
+    href: https://www.linkedin.com/in/andrew-hill-39437177/
+  Ben Bray:
+    href: https://www.linkedin.com/in/ben-bray-a1380331/
+  Lizz Paley:
+    href: https://www.linkedin.com/in/lizz-paley-b3a509155/
+  Victoria McCurran:
+    href: https://www.linkedin.com/in/victoria-mccurran-69b43b91/
+  SSNAP:
+    href: https://www.strokeaudit.org
+    html: "<img src='https://www.strokeaudit.org/App_Themes/SSNAP/Images/SSNAPlogo.jpg?v=2'>"
+
+development:
+  mode: unreleased
+  
+reference:
+  - title: Cohort definitions
+    desc:  >
+      Cohorts are time series-orientated sets of patient records:
+      selected for their shared characteristics (eg. all strokes
+      admitted within a given time period).
+      Cohort definitions are objects in R to describe the rules to
+      form a cohort of patient in R, and provide metadata about the
+      cohort (such as the cohort name, a description of how that
+      cohort was selected, etc).
+    contents:
+    - cohort_definition
+    - is_cohort_definition
+    - cohort_slice_first_team
+    - cohort_slice_last_team
+    - aggregate_cohort_on_period_type
+    - source_data_columns
+  - title: Audit measures
+    desc:  >
+      Audit measures are measures of quality that will be performed
+      upon each record within the cohort. They can either be discrete
+      (ie. the record met or did not meet criteria), or continuous
+      (ie. a measure of time or some other continuous variable).
+      These are represented as individual audit_measure objects,
+      which define the measure and provide metadata about it (such
+      as a name, and descriptor of what is being measured and why).
+    contents:
+    - audit_measure
+    - is_audit_measure
+    - create_output
+    - create_output.audit_measure_continuous
+    - create_output.audit_measure_discrete
+    - create_descriptors
+    - create_descriptors.audit_measure_continuous
+    - create_descriptors.audit_measure_discrete
+    - create_categories
+    - create_categories.audit_measure_continuous
+    - create_categories.audit_measure_discrete
+    - create_data_type_label
+    - create_data_type_label.audit_measure_continuous
+    - create_data_type_label.audit_measure_discrete
+
+  - title: Audit output specifications
+    desc: >
+      A series of audit measures must be applied to a cohort to
+      produce aggregated and anonymised results for analysis. We
+      define a table of audit measures together as a group called an
+      audit output specification. The way to do this is to create a
+      tibble with pre-defined columns describing which measures
+      should be applied together: the primary column of which contains
+      each individual audit measure. as_audit_output_spec describes
+      the other columns needed in this tibble.
+    contents:
+      - as_audit_output_spec
+      - is_audit_output_spec
+
+  - title: Cohort data definitions
+    desc: >
+      Once a cohort has been defined, and an audit output
+      specification describing the summary values of audit measures
+      has been defined, these need to be put together to make a
+      cohort_data_definition object. This is what will be passed to
+      create_cohort to then produce a cohort of data with the summary
+      statistics requested.
+    contents:
+    - cohort_data_definition
+    - is_cohort_data_definition
+
+  - title: Creating a cohort
+    desc: >
+      There are two useful outputs that can be created from the data.
+      Record-level output can be created using create_filtered_cohort,
+      which takes a cohort data definition and applies additional
+      filtering to it. This is primarily for us in realtime
+      dashboards or internal team reporting where knowing patient
+      detail is required. create_aggregated_cohort returns summarised
+      aggregated and anonymised data about each patient and is used
+      for external-facing reports.
+    contents:
+      - create_aggregated_cohort
+      - create_filtered_cohort
+
+  - title: SSNAP measure, audit output and cohort definitions
+    desc:  >
+      SSNAPStats works by building a library of calculations to
+      apply to cohorts of stroke patient data - both at record
+      (individual patients) level and for aggregation (summary
+      statistics of patients grouped by time period or treating team).
+      These are mainly applied by the cohorts function to make our
+      cohorts, but they are exposed for use by other packages if
+      required. Fields are created at record level; measures are
+      aggregations of sets of records.
+      For information governance purposes we want data to be handled
+      in aggregated form only wherever possible unless it's essential
+      to expose individual patient detail.
+    contents:
+    - ssnap_cohorts
+    - ssnap_scores
+    - ssnap_cohort_names
+    - ssnap_cohort_definitions
+    - ssnap_cohort_filters
+    - ssnap_field
+    - ssnap_measures
+    - aggregated_output_kis_72hrs
+    - aggregated_output_ac_72hrs
+    - aggregated_output_casemix_72hrs
+    - aggregated_output_portfolio_72hrs
+    - aggregated_output_kis_discharge
+    - aggregated_output_kis_team_post72hrs
+    - aggregated_output_portfolio_post72hrs_7day
+    - aggregated_output_portfolio_post72hrs_discharge
+
+  - title: SSNAP summary statistics definitions
+    desc: >
+      Summary statistics definitions are sets of calculations applied
+      alongside the audit output specification to perform calculations
+      upon the aggregated data. Summary statistics have to refer to
+      the names of the generated rows (eg. a median as ColumnNameQ2.)
+      Common applications are for creating therapy compliance
+      calculations from other domain results for the therapy domains;
+      or calculating the SSNAP scores for each domain or key
+      indicator.
+    contents:
+    - summary_values_therapy_compliance
+    - summary_values_ssnap_scores
+   
+  - title: SSNAP report periods
+    desc:  >
+      SSNAP reporting periods were initially quarterly, following the
+      financial year. For the 2016 and 2017 financial years, reports
+      have been trimesterly (4-monthly). From April 2018,
+      three-monthly has returned. This makes working out the report
+      period from the date and vice versa complicated. These functions
+      assist with that, and are used by SSNAPStats, SSNAPReports and
+      SSNAPDashboard.
+    contents:
+    - report_period_start_date_in_period
+    - report_period_end_date_in_period
+    - ssnap_report_period
+    - ssnap_report_period_series
+    - ssnap_report_year_series
+  - title: Bank holidays
+    desc:  >
+      Vectors of bank holidays for England, Wales and Northern
+      Ireland for looking at working patterns outside of normal
+      working hours.
+    contents:
+    - bank_holidays_engwales
+    - bank_holidays_ni
+  - title: The Fake Hospital sample dataset
+    desc:  >
+      Fake data for testing and developing code without using real
+      patients.
+    contents:
+    - ssnap_fake_data
+  - title: Internal functions
+    desc:  >
+      These are used within the code but are not exported; you only
+      need to know how they work if you are modifying SSNAPInterface.
+    contents:
+    - starts_with("internal_")
+  - title: Deprecated functions
+    desc:  >
+      These are functions at the end of their lifecycle, and are in
+      the process of being removed or replaced. This may be because
+      a better method has been found; or it might be because it is
+      no longer needed or is better located elsewhere within our
+      package suite; but work is ongoing to remove all dependency on
+      the code. The documentation should be clear what the intended
+      development direction with the function is. Once we are happy
+      all dependency on the code is removed it and its documentation
+      are removed.
+    contents:
+    - starts_with("deprecated_")
+
+articles:
+  - title: "The structure of SSNAPStats"
+    desc: >
+      Understand where SSNAPStats fits within the SSNAP workflow
+    contents:
+    - 01_Structure
+  - title: "Use SSNAPStats (TODO)"
+    desc: >
+      Describe how to use SSNAPStats to create output data.
+    contents:
+    - 02_UsingSSNAPStats
+  - title: "Add cohorts and measures to SSNAP (TODO)"
+    desc: >
+      Understand how to extend and maintain SSNAPStats with new
+      cohorts and measures.
+    contents:
+    - 03_AddCohortsAndMeasures

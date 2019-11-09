@@ -1,0 +1,113 @@
+---
+title: "Explore the structure of SSNAPStats"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Explore the structure of SSNAPStats}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE,
+                      comment = "#>",
+                      fig.width = 7,
+                      fig.height = 7,
+                      fig.align = "center")
+```
+
+## About the SSNAP R packages
+
+SSNAPStats is a package designed to produce statistics from national
+audit data. It is specifically designed around Stroke Sentinel
+National Audit data (see <http://www.strokeaudit.org>), but recent
+developments have made it sufficiently generic to be potentially
+applicable to other audits in future.
+
+SSNAPStats is part of a group of packages for processing SSNAP data:
+
+```{r package_graph, echo=FALSE}
+DiagrammeR::DiagrammeR("graph TB;
+  A>Raw SSNAP Data]-->B(SSNAPInterface);
+  B-->C(SSNAPStats);
+  C-->E(SSNAPReports);
+  D(SSNAPCharts)-->E;
+  D-->F((SSNAP Dashboard));
+  C-->F")
+```
+
+
+- [SSNAPInterface](https://ssnap.github.io/SSNAPInterface/) loads raw
+CSV file data.
+- [SSNAPStats](https://ssnap.github.io/SSNAPStats/) processes loaded
+SSNAP data, organises the data into cohorts and prepares aggregated
+data for reporting.
+- [SSNAPCharts](https://ssnap.github.io/SSNAPCharts/) provides
+generic report outputs for reports.
+- [SSNAPReports](https://ssnap.github.io/SSNAPReports/) produces
+reports from SSNAP data.
+- [SSNAPDashboard](https://ssnap.github.io/SSNAPDashboard/) is a
+Shiny-based application for realtime SSNAP data analysis.
+
+## How does SSNAPStats analyse audit data?
+
+SSNAPStats breaks down the audit processing into a set of key
+steps:
+
+```{r object_graph, echo=FALSE}
+DiagrammeR::DiagrammeR("graph TB;
+  A(cohorts)-->D{create_cohort};
+  B(audit_measure)-->C(audit_output_spec);
+  C-->D")
+```
+
+
+The first step is to set up rules to produce a definition of the 
+**cohorts** you want to use. Cohorts are time series-orientated
+collections of patient records.
+
+The second stage is to set up rules to produce **audit measures**.
+These rules produce either discrete results (ie. counts of a
+particular value, or proportions of patients meeting or not meeting a
+condition,) or they may be continuous (ie. to create median values).
+
+Different outputs of results from an audit require different
+levels of detail: the more detail you request the longer it takes to
+process. An **audit output specification** is used to produce a list
+of the audit measures you want, alongside how much detail from each
+measure in the list, without having to re-write the same measure
+multiple times to get different levels of detail for different
+purposes.
+
+Finally we use the **create_cohort()** function to apply the cohort
+definition with the audit output specification to produce the results.
+
+## Shortcuts to make routine SSNAP data analysis easier
+
+So far the process we have described is applicable to all audits.
+With SSNAP, there are predefined cohort definitions, and predefined
+lists of audit measures that are used for routine published analysis.
+
+To make things simpler, there are a set of lists and functions, all
+prefixed with **ssnap_**, that make handling routine data easier.
+These use pre-built cohorts and measures within the package. There
+are also functions to build a 'ssnapScores' table - which takes
+aggregated data from multiple cohorts and produces the scored reports
+seen in published SSNAP data. These functions are all built using the
+lower level generic functions described earlier.
+
+- **ssnap_field** is a named list of 'record level' expressions (such
+as time differences). These are inserted into audit measures to make
+the code easier to read and/or reduce duplication.
+- **ssnap_measures** is a named list of audit measures used in SSNAP.
+- **ssnap_cohort_definitions** is a named list of cohort definitions.
+- The **ssnap_audit_output_specs.R file** defines a set of audit
+output specifications for cohorts used in SSNAP analysis. Each one of
+these is a tibble.
+- **ssnap_cohorts** is a simplified version of the **create_cohort**
+functions. It creates cohorts using the pre-defined cohorts and
+measures.
+
+SSNAP reporting periods have changed over time from three monthly to
+four monthly and back again; therefore there are also definitions for
+the reporting periods and annual report periods for time series
+analysis and filtering.

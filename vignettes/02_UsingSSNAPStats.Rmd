@@ -1,0 +1,64 @@
+---
+title: "Use SSNAPStats to create output data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Use SSNAPStats to create output data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE,
+                      comment = "#>",
+                      fig.width = 7,
+                      fig.height = 7,
+                      fig.align = "center")
+library(tibble)
+library(ssnapstats)
+```
+
+## Using the Fake Hospital Dataset
+
+The Fake Hospital dataset is not currently designed for any serious
+use beyond examples and testing code. Ideally a more complete and
+realistic dataset would allow more complex ideas to be demonstrated.
+We will however use it to demonstrate the functions throughout this
+vignette.
+
+You can access this dataset as a tibble using the command:
+
+```{r ssnap_fake_data, eval = FALSE}
+ssnap_fake_data
+```
+
+The raw output from ssnap_fake_data looks like this:
+
+```{r print_ssnap_fake_data, rows.print = 10}
+ssnap_fake_data
+```
+
+## Fetch a pre-built SSNAP cohort
+
+SSNAPStats has a set of 'high level' functions for dealing with
+known SSNAP cohorts and measures sets to save you having to write
+functions picking the correct cohort and measures list.
+
+Please note that the data from the Fake Hospital dataset is very
+incomplete so the values are not representative and in many cases will
+be missing.
+
+```{r show_a_ssnap_cohort}
+testCohort <- ssnap_cohorts(ssnap_data = ssnap_fake_data,
+                            cohort = "Team72HrCohortKIs",
+                            period_type = "months",
+                            aggregate_by = "team")
+```
+
+To get a full list of available cohorts, look at the
+\code{ssnap_cohort_names} vector for available values (the help file
+describes more completely each cohort):
+
+```{r show ssnap_cohort_names}
+ssnap_cohort_names
+```
+
