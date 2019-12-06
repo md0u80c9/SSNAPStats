@@ -782,9 +782,9 @@ ssnap_measures <- list(
     description = "First stroke unit within 4 hours",
     exclusions = rlang::expr( (.data[["S1FirstWard"]] == "ICH") |
       (!is.na(.data[["S2IAI"]]) & .data[["S2IAI"]])),
-    numerators = rlang::expr(
-      !! ssnap_field[["ClockStartToFirstStrokeUnitMins"]]
-      <= (4 * 60)),
+    numerators = rlang::expr(.data[["S1FirstWard"]] == "SU" &
+      (!! ssnap_field[["ClockStartToFirstStrokeUnitMins"]]
+      <= (4 * 60))),
     csv_columns = c("S1PatientClockStartDateTime",
                     "S1FirstStrokeUnitArrivalDateTime",
                     "S1FirstWard",
