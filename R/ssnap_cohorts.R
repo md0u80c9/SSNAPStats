@@ -197,7 +197,7 @@ ssnap_scores <- function(ssnap_data,
                           aggregate_by,
                           convert_team_codes = FALSE)
   team72[["results"]] <- dplyr::rename_all(team72[["results"]],
-                              dplyr::funs(paste0("TC", .)))
+                                           list(~paste0("TC", .)))
   team72[["results"]] <- dplyr::rename(team72[["results"]],
                           !!! tcrename_columns,
                           TCn72hrs = "TCn")
@@ -208,7 +208,7 @@ ssnap_scores <- function(ssnap_data,
                           aggregate_by,
                           convert_team_codes = FALSE)
   patient72[["results"]] <- dplyr::rename_all(patient72[["results"]],
-                                 dplyr::funs(paste0("PC", .)))
+                                              list(~paste0("PC", .)))
   patient72[["results"]] <- dplyr::rename(patient72[["results"]],
                              !!! pcrename_columns,
                              PCn72hrs = "PCn")
@@ -228,7 +228,7 @@ ssnap_scores <- function(ssnap_data,
   team_discharge <- team_discharge[["results"]]
   
   team_discharge <- dplyr::rename_all(team_discharge,
-                                 dplyr::funs(paste0("TC", .)))
+                                      list(~paste0("TC", .)))
   team_discharge <- dplyr::rename(team_discharge,
                              !!! tcrename_columns,
                              TCnDischarge = "TCn")
@@ -246,7 +246,7 @@ ssnap_scores <- function(ssnap_data,
   team_post72hrs <- team_post72hrs[["results"]]
   
   team_post72hrs <- dplyr::rename_all(team_post72hrs,
-                                     dplyr::funs(paste0("TC", .)))
+                                      list(~paste0("TC", .)))
   team_post72hrs <- dplyr::rename(team_post72hrs,
                                  !!! tcrename_columns,
                                  TCnPost72hrs = "TCn")
@@ -265,7 +265,7 @@ ssnap_scores <- function(ssnap_data,
   patient_post72hrs <- patient_post72hrs[["results"]]
   
   patient_post72hrs <- dplyr::rename_all(patient_post72hrs,
-                                      dplyr::funs(paste0("PC", .)))
+                                         list(~paste0("PC", .)))
   patient_post72hrs <- dplyr::rename(patient_post72hrs,
                                   !!! pcrename_columns,
                                   PCnPost72hrs = "PCn")
