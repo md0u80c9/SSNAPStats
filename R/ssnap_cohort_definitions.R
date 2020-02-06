@@ -300,5 +300,50 @@ ssnap_cohort_definitions <- list(
     attribute_to_team = cohort_slice_first_team,
     csv_columns = c("LockedS8",
                     "S1PatientClockStartDateTime")
+  ),
+  
+  # CriticalHourCohort ==============================================
+  
+  CriticalHourCohort = cohort_definition(
+    cohort_name = "Critical Hour Standards cohort",
+    
+    row_selection_criteria = rlang::exprs(
+      !! ssnap_cohort_filters[["InpatientTeams"]],
+      !! ssnap_cohort_filters[["Exclude6mReviews"]],
+      !! ssnap_cohort_filters[["72HrDataPresent"]],
+      !(.data[["S1OnsetInHospital"]])
+    ),
+    
+    reporting_period_index_name = "S1PatientClockStartDateTime",
+    
+    attribute_to_team = cohort_slice_first_team,
+    
+    attribute_to_team_columns = c("TeamCode",
+                                  "TransferFromDateTime",
+                                  "TransferFromTeamCode"),
+    
+    apply_data_from = function(source_data) {
+      # Exclude pa
+      cohort_data <- dplyr::filter(source_data,
+                                   !! ssnap_cohort_filters[["LockedTo72Hrs"]])
+      cohort_slice_first_team(cohort_data)
+    },
+    
+    csv_columns = c("TeamCode", "TransferFromDateTime",
+                    "TransferFromTeamCode",
+                    "LockedS1", "LockedS2", "LockedS3",
+                    "S1PatientClockStartDateTime"),
+    
+    description = glue::glue("
+      The Critical Hour Standards look at care provided in the first
+      hour of admission. These are similar to the team-centred 72
+      hour results: they are based upon records locked to 72h for
+      patients who arrived at hospital in the specified
+      report period, and attributed to the first team which treated
+      the patient, regardless of which team locked the record to 72h
+      (i.e. the second team may have locked the record to 72h, but
+      results are attributed to first team). Unlike the Team 72 hour
+      cohort, the Critical Hour Standards do not apply to inpatient
+      strokes.")
   )
 )

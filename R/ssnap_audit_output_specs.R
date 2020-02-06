@@ -501,8 +501,28 @@ aggregated_output_kis_patient_post72hrs <- tibble::tribble(
   ssnap_measures[["DischargeNamedContact"]], NULL, "pct"
 )
 
+aggregated_output_kis_critical_hour <- tibble::tribble(
+  ~x, ~numerator, ~category, ~output_type,
+  
+  ssnap_measures[["BrainImagingGrouped"]], "Within1hr", "Critical1Hr", "d_n_pct",
+  ssnap_measures[["ClinicianAssessedWithin1hr"]], NULL, "Critical1Hr", "d_n_pct",
+  ssnap_measures[["tPACriticalHourStandardWithin1hr"]], NULL, "Critical1Hr", "d_n_pct"
+)
+
+ssnap_measures_tests <- tibble::tribble(
+  ~x, ~numerator, ~category, ~output_type,
+  
+  ssnap_measures[["Gender"]], "Male", "Gender", "d_n_pct",
+  ssnap_measures[["AgeOver80"]], NULL, "Age", "d_n_pct",
+  ssnap_measures[["AgeOnArrivalGrouped"]], NULL, "Age", "d_n_pct"
+)
+
 #' @export
 ssnap_output_specs <- list(
+  "Tests" = list(
+    "cohort" = "Team72HrCohort",
+    "outputs_table" = ssnap_measures_tests),
+  
   "Team72HrCohortKIs" = list(
     "cohort" = "Team72HrCohort",
     "outputs_table" = aggregated_output_kis_72hrs),
@@ -532,6 +552,8 @@ ssnap_output_specs <- list(
   #TODO Pt post-7day cohort not yet defined
   "PatientPost72HrsAllTeamsCohortKIs" = list(
     "cohort" = "PatientPost72HrCohort",
-    "outputs_table" = aggregated_output_kis_patient_post72hrs)
-
+    "outputs_table" = aggregated_output_kis_patient_post72hrs),
+  "CriticalHourCohortKIs" = list(
+    "cohort" = "CriticalHourCohort",
+    "outputs_table" = aggregated_output_kis_critical_hour)
 )

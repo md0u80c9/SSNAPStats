@@ -48,6 +48,7 @@ audit_measure <- function(stem_name,
                           exclusions = NULL,
                           numerators,
                           numerator_descriptors = NULL,
+                          new_numerators = NULL,
                           is_key_indicator = FALSE,
                           reference_id = NULL,
                           csv_columns = NULL,
@@ -77,6 +78,23 @@ audit_measure <- function(stem_name,
                      {length(numerator_descriptors)} numerator \\
                      descriptors."))
   }
+  
+  if (!tibble::is_tibble(new_numerators)) {
+    if (rlang::is_expression(new_numerators)) {
+      new_numerators = tibble::tribble(
+        ~numerator, ~fun, ~descriptor,
+        stem_name, new_numerators, description)
+    } else {
+      stop("numerators must be either a tibble or an expression")
+    }
+  } else {
+    if (!all(c("numerator", "fun", "descriptor") %in%
+             names(new_numerators))) {
+      stop(glue::glue("numerators must contain the columns \\
+                      numerator, fun and descriptor"))
+    }
+  }
+  
   if (!is.null(csv_columns) & !is.character(csv_columns)) {
     stop("csv_columns must be either NULL or a character vector")
   }
@@ -105,6 +123,7 @@ audit_measure <- function(stem_name,
     "exclusions" = exclusions,
     "numerators" = numerators,
     "numerator_descriptors" = numerator_descriptors,
+    "new_numerators" = new_numerators,
     "is_key_indicator" = is_key_indicator,
     "reference_id" = reference_id,
     "csv_columns" = csv_columns,
@@ -647,6 +666,77 @@ create_output_tbl <- function(outputs_table) {
                          "x",
                          "numerator", "output_type")))
   )
+}
+
+# This is experimental work to replace creation of the outputs table
+# With more efficient / easier to follow code.
+
+# First we pick which numerators we want.
+
+# Then we recode the output type (so far we just use that
+# to produce the 'units' but we can use case to recode to a list of
+# units with their functions).
+# We then separate the vector (we will need to unnest the list if we
+# opt for a list format.
+
+# As part of the review we should look to merge numerators and
+# numerator_descriptors in audit_measure as a tibble (ultimately as
+# class objects; so a single operation extracts them and removes the
+# danger of having mismatched labels.
+
+#' Create a list of outputs from a table of audit_measure objects
+
+#' @export
+new_output_table <- function(outputs_table) {
+  outputs_table$output_type <- 
+    dplyr::recode(outputs_table$output_type,
+                  d_n_pct = "d-n,%",
+                  pct = "%",
+                  quartiles = "Q1,Q2,Q3",
+                  median = "Q2")
+  outputs_table <-
+    tidyr::separate_rows(outputs_table,
+                         "output_type",
+                         sep = "-")
+
+  outputs_table <-
+    tidyr::hoist(outputs_table, "x",
+                 new_numerators = "new_numerators")
+  outputs_table <-
+    dplyr::mutate(outputs_table,
+       new_numerators = dplyr::if_else(
+         output_type != "d",
+           new_numerators,
+           NULL))
+  
+  outputs_table <- dplyr::select(outputs_table, -"x")
+  outputs_table <- dplyr::rename(outputs_table,
+                                 "desired_numerator" = "numerator")
+  outputs_table <-
+    tidyr::unnest(outputs_table,
+                         col = "new_numerators",
+                  keep_empty = TRUE)
+  outputs_table <- dplyr::filter(outputs_table,
+    (numerator == desired_numerator) | (desired_numerator == "NULL")
+    | (fun == "NULL"))
+  outputs_table <- dplyr::select(outputs_table, -"desired_numerator")
+
+#  outputs_table$output_type <- 
+#    dplyr::recode(outputs_table$output_type,
+#                  d_n_pct = "d,n,%",
+#                  pct = "%",
+#                  quartiles = "Q1,Q2,Q3",
+#                  median = "Q2")
+  outputs_table <-
+    tidyr::separate_rows(outputs_table,
+                         "output_type",
+                         sep = ",")
+
+  outputs_table <- dplyr::select(outputs_table,
+                                 "categories" = category,
+                                 "descriptors" = descriptor,
+                                 "output_type",
+                                 "exprs"= fun)
 }
 
 #' Given an outputs_table containing a list of aggregated data
