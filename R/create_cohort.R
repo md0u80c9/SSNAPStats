@@ -92,8 +92,9 @@ create_cohort <- function(ssnap_data,
   # Apply filters only AFTER checking the cohort because otherwise
   # we might for example filter out cohort data which we need to
   # apply from a right join etc.
-  ssnap_data <- dplyr::filter(ssnap_data,
-                              !!! filters)
+  if (!is.null(filters)) {
+    ssnap_data <- dplyr::filter(ssnap_data, !!! filters)
+  }
   
   # If period type is set then we are aggregating the data
   # otherwise we're adding fields / returning patient-level data
