@@ -323,7 +323,7 @@ ssnap_transfer_tree <- function(ssnap_data,
   transfer_tree_from <- dplyr::group_by(post72hr,
                                       .data[["TeamCode"]],
                                       .data[[transfer_type]],
-                                      add = TRUE)
+                                      .add = TRUE)
   transfer_tree_from <- dplyr::count(transfer_tree_from,
                                    .data[["TeamCode"]],
                                    .data[[transfer_type]])
