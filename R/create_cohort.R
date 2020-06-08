@@ -98,21 +98,23 @@ create_cohort <- function(ssnap_data,
   
   # If period type is set then we are aggregating the data
   # otherwise we're adding fields / returning patient-level data
-  if (!is.null(period_type)) {
-    results <- aggregate_cohort_on_period_type(
-      cohort = results,
-      period_type = period_type,
-      aggregate_by = aggregate_by,
-      period_date_field =
-        from_cohort_definition[["reporting_period_index_name"]])
+  if (!is.null(audit_outputs_table)) {
+    if (!is.null(period_type)) {
+      results <- aggregate_cohort_on_period_type(
+        cohort = results,
+        period_type = period_type,
+        aggregate_by = aggregate_by,
+        period_date_field =
+          from_cohort_definition[["reporting_period_index_name"]])
 
-    results <- dplyr::summarise(
-      results,
-      "n" = dplyr::n(),
-      !!! audit_outputs_table$exprs)
-  } else {
-    results <- dplyr::mutate(results,
+      results <- dplyr::summarise(
+        results,
+        "n" = dplyr::n(),
+        !!! audit_outputs_table$exprs)
+    } else {
+      results <- dplyr::mutate(results,
                             !!! audit_outputs_table$exprs)
+    }
   }
 
   # Return a list rather than the tibble itself.
@@ -255,5 +257,5 @@ aggregate_cohort_on_period_type <- function(cohort,
 
   cohort <- dplyr::group_by(
     cohort,
-    .data[["ReportPeriod"]], add = TRUE)
+    .data[["ReportPeriod"]], .add = TRUE)
 }
