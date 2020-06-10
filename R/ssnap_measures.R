@@ -1084,7 +1084,8 @@ ssnap_measures <- list(
       rlang::expr(.data[["S1FirstWard"]] == "SU" &
         (!! ssnap_field[["ClockStartToFirstStrokeUnitMins"]]
         <= (4 * 60))),
-    csv_columns = c("S1PatientClockStartDateTime",
+    csv_columns = c("S1FirstWard",
+                    "S1PatientClockStartDateTime",
                     "S1FirstStrokeUnitArrivalDateTime",
                     "S1FirstWard",
                     "S2IAI"),
@@ -4786,8 +4787,8 @@ ClinicianAssessedWithin1hr = audit_measure(
     (!!ssnap_field[["ClockStartToConsultantMins"]] <= 60) |
       (!!ssnap_field[["ClockStartToStrokeNurseMins"]] <= 60)),
   csv_columns = c("S1PatientClockStartDateTime",
-                  "S3StrokeNurseAssessedDateTime",
-                  "S3StrokeConsultantAssessedDateTime"),
+                  "S3StrokeConsultantAssessedDateTime",
+                  "S3StrokeNurseAssessedDateTime"),
   measure_type = "discrete"),
 
 # tPACriticalHourStandardWithin1hr =============================
@@ -4814,12 +4815,15 @@ tPACriticalHourStandardWithin1hr = audit_measure(
   new_numerators = rlang::expr(
     !! ssnap_field[["ClockStartToThrombolysisMins"]] <= 60),
   csv_columns = c("S1PatientClockStartDateTime",
+                  "S2ThrombolysisDateTime",
                   "S1OnsetInHospital",
                   "S1OnsetDateIsPrecise",
                   "S1OnsetTimeIsPrecise",
                   "S1OnsetDateTime",
+                  "S1PatientClockStartDateTime",
                   "S2StrokeTypeIsInfarct",
-                  "S2ThrombolysisDateTime",
-                  "S2Thrombolysis"),
+                  "S2Thrombolysis",
+                  "S2ThrombolysisNoBut",
+                  "S2IAI"),
   measure_type = "discrete")
 )
