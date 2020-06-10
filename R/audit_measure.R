@@ -273,8 +273,9 @@ create_output.audit_measure_continuous <- function(x,
 
   output <- purrr::map(probs[[output_type]], ~ rlang::expr(
     stats::quantile(!! numerator_with_exclusions,
-                               probs = !!.x,
-                               na.rm = TRUE)))
+                    probs = !!.x,
+                    names = FALSE,
+                    na.rm = TRUE)))
   names(output) <- glue::glue(
     "{measure$stem_name}{indicator_name[[output_type]]}")
   output
