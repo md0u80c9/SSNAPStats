@@ -1,6 +1,7 @@
 library(ssnapstats)
 context("Tests for Team7DayCohort")
 
+
 test_that("A team admits and locks their patient to discharge.", {
   sample_data <- tibble::tibble(
     PatientId = 1,
@@ -8,6 +9,7 @@ test_that("A team admits and locks their patient to discharge.", {
     TeamCode = 900,
     TransferFromDateTime = as.POSIXct(NA),
     TransferFromTeamCode = NA,
+    S1TeamClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     LockedS1 = TRUE,
     LockedS2 = TRUE,
     LockedS3 = TRUE,
@@ -16,7 +18,6 @@ test_that("A team admits and locks their patient to discharge.", {
     LockedS6 = TRUE,
     LockedS7 = TRUE,
     InpatientReadmission = 0,
-    S1TeamClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     S1PatientClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     S7DischargeType = "H"
   )
@@ -25,7 +26,7 @@ test_that("A team admits and locks their patient to discharge.", {
     ssnap_data = sample_data,
     from_cohort_definition =
       ssnap_cohort_definitions[["Team7DayCohort"]])
-  
+
   # Our single record should be included in the cohort unchanged.
   expect_equal(test_cohort$results, sample_data)
 })
@@ -75,6 +76,8 @@ test_that(glue::glue(
     TransferFromDateTime = c(as.POSIXct(NA),
                              as.POSIXct("2019-01-10 00:00:30")),
     TransferFromTeamCode = c(NA, 900),
+    S1TeamClockStartDateTime = c(as.POSIXct("2019-01-01 00:00:30"),
+                                 as.POSIXct("2019-01-10 00:00:30")),
     LockedS1 = c(TRUE, TRUE),
     LockedS2 = c(TRUE, TRUE),
     LockedS3 = c(TRUE, TRUE),
@@ -83,8 +86,6 @@ test_that(glue::glue(
     LockedS6 = c(TRUE, TRUE),
     LockedS7 = c(TRUE, TRUE),
     InpatientReadmission = c(0, 0),
-    S1TeamClockStartDateTime = c(as.POSIXct("2019-01-01 00:00:30"),
-                                 as.POSIXct("2019-01-10 00:00:30")),
     S1PatientClockStartDateTime = c(as.POSIXct("2019-01-01 00:00:30"),
                                     as.POSIXct("2019-01-01 00:00:30")),
     S7DischargeType = c("T", "H"),
@@ -102,6 +103,7 @@ test_that(glue::glue(
     TeamCode = 900,
     TransferFromDateTime = as.POSIXct(NA),
     TransferFromTeamCode = NA_real_,
+    S1TeamClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     LockedS1 = TRUE,
     LockedS2 = TRUE,
     LockedS3 = TRUE,
@@ -110,7 +112,6 @@ test_that(glue::glue(
     LockedS6 = TRUE,
     LockedS7 = TRUE,
     InpatientReadmission = 0,
-    S1TeamClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     S1PatientClockStartDateTime = as.POSIXct("2019-01-01 00:00:30"),
     S7DischargeType = "H",
     S1AgeOnArrival = 42)

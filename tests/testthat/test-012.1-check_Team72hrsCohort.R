@@ -167,8 +167,10 @@ test_audit_outputs_table <- create_output_tbl(
     ReportPeriod = as.Date("2018-12-01"),
     n = as.integer(1),
     AgeOnArrivalQ2 = 42)
+  
+  actual_result <- dplyr::ungroup(test_cohort$results)
 
-  expect_equal(test_cohort$results, expected_result)
+  expect_equal(actual_result, expected_result)
 })
 
 # A patient for six month review (excluded)

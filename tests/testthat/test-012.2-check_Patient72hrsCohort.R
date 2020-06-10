@@ -169,8 +169,10 @@ test_that(glue::glue(
      ReportPeriod = c(as.Date("2018-12-01"), as.Date("2018-12-01")),
      n = as.integer(c(1,1)),
      AgeOnArrivalQ2 = c(42, 42))
+  
+   actual_result <- dplyr::ungroup(test_cohort$results)
    
-   expect_equal(test_cohort$results, expected_result)
+   expect_equal(actual_result, expected_result)
  })
 
 # A patient for six month review (excluded)
